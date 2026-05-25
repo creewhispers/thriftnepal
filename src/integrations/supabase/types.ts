@@ -14,7 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      orders: {
+        Row: {
+          address: string
+          city: string
+          created_at: string
+          full_name: string
+          id: string
+          notes: string | null
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          phone: string
+          product_id: string
+          product_image: string | null
+          product_title: string
+          quantity: number
+          status: Database["public"]["Enums"]["order_status"]
+          total: number
+          unit_price: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address: string
+          city: string
+          created_at?: string
+          full_name: string
+          id?: string
+          notes?: string | null
+          payment_method?: Database["public"]["Enums"]["payment_method"]
+          phone: string
+          product_id: string
+          product_image?: string | null
+          product_title: string
+          quantity?: number
+          status?: Database["public"]["Enums"]["order_status"]
+          total: number
+          unit_price: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          city?: string
+          created_at?: string
+          full_name?: string
+          id?: string
+          notes?: string | null
+          payment_method?: Database["public"]["Enums"]["payment_method"]
+          phone?: string
+          product_id?: string
+          product_image?: string | null
+          product_title?: string
+          quantity?: number
+          status?: Database["public"]["Enums"]["order_status"]
+          total?: number
+          unit_price?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +82,13 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      order_status:
+        | "pending"
+        | "confirmed"
+        | "shipped"
+        | "delivered"
+        | "cancelled"
+      payment_method: "cod" | "esewa" | "khalti"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +215,15 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      order_status: [
+        "pending",
+        "confirmed",
+        "shipped",
+        "delivered",
+        "cancelled",
+      ],
+      payment_method: ["cod", "esewa", "khalti"],
+    },
   },
 } as const
