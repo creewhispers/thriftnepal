@@ -1,9 +1,13 @@
 import { Link } from "@tanstack/react-router";
-import { Search, Heart, MessageCircle, User, Plus, Moon, Sun } from "lucide-react";
+import { Search, Heart, MessageCircle, User, Plus, Moon, Sun, Package, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/lib/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 export function Navbar() {
   const [dark, setDark] = useState(false);
+  const { user } = useAuth();
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
   }, [dark]);
@@ -40,7 +44,28 @@ export function Navbar() {
           </button>
           <button className="hidden md:grid h-9 w-9 place-items-center rounded-full hover:bg-secondary transition"><Heart className="h-4 w-4" /></button>
           <button className="hidden md:grid h-9 w-9 place-items-center rounded-full hover:bg-secondary transition"><MessageCircle className="h-4 w-4" /></button>
-          <button className="hidden md:grid h-9 w-9 place-items-center rounded-full hover:bg-secondary transition"><User className="h-4 w-4" /></button>
+
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger className="grid h-9 w-9 place-items-center rounded-full bg-foreground text-background text-xs font-bold hover:opacity-90 transition">
+                {(user.email ?? "U").slice(0, 1).toUpperCase()}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <div className="px-2 py-1.5 text-xs text-muted-foreground truncate">{user.email}</div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/orders" className="flex items-center gap-2"><Package className="h-4 w-4" /> My orders</Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => supabase.auth.signOut()} className="flex items-center gap-2 text-destructive">
+                  <LogOut className="h-4 w-4" /> Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link to="/login" className="hidden md:grid h-9 w-9 place-items-center rounded-full hover:bg-secondary transition"><User className="h-4 w-4" /></Link>
+          )}
+
           <button className="ml-2 inline-flex items-center gap-1.5 rounded-full bg-foreground text-background pl-3 pr-4 py-2 text-sm font-medium hover:opacity-90 transition">
             <Plus className="h-4 w-4" /> Sell
           </button>

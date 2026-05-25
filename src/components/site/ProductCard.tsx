@@ -1,11 +1,14 @@
 import { motion } from "framer-motion";
-import { Heart, MapPin, BadgeCheck } from "lucide-react";
+import { Heart, MapPin, BadgeCheck, ShoppingBag } from "lucide-react";
 import { type Product, formatNPR } from "@/lib/products";
 import { useState } from "react";
+import { CheckoutDialog } from "./CheckoutDialog";
 
 export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
   const [liked, setLiked] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
   return (
+    <>
     <motion.article
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -31,6 +34,12 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
         <span className="absolute top-2 left-2 rounded-full bg-background/85 backdrop-blur px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide">
           {product.condition}
         </span>
+        <button
+          onClick={() => setCheckoutOpen(true)}
+          className="absolute bottom-2 left-2 right-2 inline-flex items-center justify-center gap-1.5 rounded-full bg-foreground text-background py-2 text-xs font-medium opacity-0 group-hover:opacity-100 transition"
+        >
+          <ShoppingBag className="h-3.5 w-3.5" /> Buy now · COD
+        </button>
       </div>
 
       <div className="pt-3 px-0.5">
@@ -49,5 +58,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
         </div>
       </div>
     </motion.article>
+    <CheckoutDialog product={product} open={checkoutOpen} onOpenChange={setCheckoutOpen} />
+    </>
   );
 }
