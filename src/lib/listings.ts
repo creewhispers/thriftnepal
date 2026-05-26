@@ -104,8 +104,7 @@ export async function getProduct(id: string): Promise<Listing | null> {
   if (error) throw error;
   if (!data) return null;
   // fire-and-forget view bump
-  void supabase.rpc("noop").then(() => {}).catch(() => {});
-  void supabase.from("products").update({ views: (data.views ?? 0) + 1 }).eq("id", id).then(() => {});
+  void supabase.from("products").update({ views: (data.views ?? 0) + 1 }).eq("id", id).then(() => undefined);
   const [withSeller] = await attachSellers([data as Omit<Listing, "seller">]);
   return withSeller;
 }
