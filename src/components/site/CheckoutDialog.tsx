@@ -2,14 +2,14 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
-import { type Product, formatNPR } from "@/lib/products";
+import { type Listing, formatNPR } from "@/lib/listings";
 import { useAuth } from "@/lib/useAuth";
 import { toast } from "sonner";
 import { Truck, ShieldCheck, MapPin } from "lucide-react";
 
 export function CheckoutDialog({
   product, open, onOpenChange,
-}: { product: Product | null; open: boolean; onOpenChange: (v: boolean) => void }) {
+}: { product: Listing | null; open: boolean; onOpenChange: (v: boolean) => void }) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
@@ -18,6 +18,7 @@ export function CheckoutDialog({
   });
 
   if (!product) return null;
+  const cover = product.images[0] ?? "";
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,12 +27,16 @@ export function CheckoutDialog({
       navigate({ to: "/login", search: { redirect: "/" } });
       return;
     }
+    if (user.id === product.seller_id) {
+      toast.error("You can't buy your own listing.");
+      return;
+    }
     setBusy(true);
     const { error } = await supabase.from("orders").insert({
       user_id: user.id,
       product_id: product.id,
       product_title: product.title,
-      product_image: product.image,
+      product_image: cover,
       unit_price: product.price,
       quantity: 1,
       total: product.price,
@@ -44,6 +49,8 @@ export function CheckoutDialog({
       toast.error(error.message);
       return;
     }
+    // mark product reserved (best-effort; ignore if not seller)
+    void supabase.from("products").update({ status: "reserved" }).eq("id", product.id);
     toast.success("Order placed! You'll pay on delivery.");
     onOpenChange(false);
     navigate({ to: "/orders" });
@@ -58,10 +65,12 @@ export function CheckoutDialog({
         </DialogHeader>
 
         <div className="flex gap-3 rounded-2xl bg-secondary p-3">
-          <img src={product.image} alt={product.title} className="h-16 w-16 rounded-xl object-cover" />
+          {cover && <img src={cover} alt={product.title} className="h-16 w-16 rounded-xl object-cover" />}
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium line-clamp-1">{product.title}</p>
-            <p className="text-xs text-muted-foreground">{product.seller.handle} · Size {product.size}</p>
+            <p className="text-xs text-muted-foreground">
+              {product.seller?.handle ?? "Seller"}{product.size ? ` · Size ${product.size}` : ""}
+            </p>
             <p className="text-sm font-semibold mt-1">{formatNPR(product.price)}</p>
           </div>
         </div>
