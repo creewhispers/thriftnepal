@@ -74,6 +74,134 @@ export type Database = {
         }
         Relationships: []
       }
+      products: {
+        Row: {
+          brand: string | null
+          category: string
+          condition: Database["public"]["Enums"]["product_condition"]
+          created_at: string
+          description: string | null
+          id: string
+          images: string[]
+          location: string
+          price: number
+          seller_id: string
+          size: string | null
+          status: Database["public"]["Enums"]["product_status"]
+          tags: string[]
+          title: string
+          updated_at: string
+          views: number
+        }
+        Insert: {
+          brand?: string | null
+          category: string
+          condition: Database["public"]["Enums"]["product_condition"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: string[]
+          location: string
+          price: number
+          seller_id: string
+          size?: string | null
+          status?: Database["public"]["Enums"]["product_status"]
+          tags?: string[]
+          title: string
+          updated_at?: string
+          views?: number
+        }
+        Update: {
+          brand?: string | null
+          category?: string
+          condition?: Database["public"]["Enums"]["product_condition"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: string[]
+          location?: string
+          price?: number
+          seller_id?: string
+          size?: string | null
+          status?: Database["public"]["Enums"]["product_status"]
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          views?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          display_name: string | null
+          handle: string | null
+          id: string
+          location: string | null
+          rating: number
+          rating_count: number
+          updated_at: string
+          user_id: string
+          verified: boolean
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          handle?: string | null
+          id?: string
+          location?: string | null
+          rating?: number
+          rating_count?: number
+          updated_at?: string
+          user_id: string
+          verified?: boolean
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          handle?: string | null
+          id?: string
+          location?: string | null
+          rating?: number
+          rating_count?: number
+          updated_at?: string
+          user_id?: string
+          verified?: boolean
+        }
+        Relationships: []
+      }
+      wishlists: {
+        Row: {
+          created_at: string
+          product_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          product_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          product_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wishlists_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -89,6 +217,8 @@ export type Database = {
         | "delivered"
         | "cancelled"
       payment_method: "cod" | "esewa" | "khalti"
+      product_condition: "New" | "Like New" | "Good" | "Worn"
+      product_status: "active" | "sold" | "reserved" | "draft"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -224,6 +354,8 @@ export const Constants = {
         "cancelled",
       ],
       payment_method: ["cod", "esewa", "khalti"],
+      product_condition: ["New", "Like New", "Good", "Worn"],
+      product_status: ["active", "sold", "reserved", "draft"],
     },
   },
 } as const
