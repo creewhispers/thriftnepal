@@ -66,9 +66,9 @@ export function Navbar() {
             <Link to="/login" className="hidden md:grid h-9 w-9 place-items-center rounded-full hover:bg-secondary transition"><User className="h-4 w-4" /></Link>
           )}
 
-          <button className="ml-2 inline-flex items-center gap-1.5 rounded-full bg-foreground text-background pl-3 pr-4 py-2 text-sm font-medium hover:opacity-90 transition">
+          <Link to="/sell" className="ml-2 inline-flex items-center gap-1.5 rounded-full bg-foreground text-background pl-3 pr-4 py-2 text-sm font-medium hover:opacity-90 transition">
             <Plus className="h-4 w-4" /> Sell
-          </button>
+          </Link>
         </nav>
       </div>
     </header>
