@@ -186,8 +186,8 @@ export const CATEGORIES = [
 ];
 
 export const CITIES = [
-  "Kathmandu", "Lalitpur", "Bhaktapur", "Pokhara", "Biratnagar",
-  "Birgunj", "Butwal", "Dharan", "Other",
+  "Bharatpur", "Chitwan", "Kathmandu", "Lalitpur", "Bhaktapur", "Pokhara",
+  "Biratnagar", "Birgunj", "Butwal", "Dharan", "Other",
 ];
 
 export const CONDITIONS: Condition[] = ["New", "Like New", "Good", "Worn"];
