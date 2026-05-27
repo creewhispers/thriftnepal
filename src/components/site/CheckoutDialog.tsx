@@ -14,7 +14,7 @@ export function CheckoutDialog({
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [form, setForm] = useState({
-    full_name: "", phone: "", address: "", city: "Kathmandu", notes: "",
+    full_name: "", phone: "", address: "", city: "Bharatpur", notes: "",
   });
 
   if (!product) return null;
@@ -87,7 +87,7 @@ export function CheckoutDialog({
             className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-accent resize-none" />
           <select value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })}
             className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-accent">
-            {["Kathmandu","Lalitpur","Bhaktapur","Pokhara","Biratnagar","Birgunj","Butwal","Dharan","Other"].map(c => (
+            {["Bharatpur","Chitwan","Kathmandu","Lalitpur","Bhaktapur","Pokhara","Biratnagar","Birgunj","Butwal","Dharan","Other"].map(c => (
               <option key={c} value={c}>{c}</option>
             ))}
           </select>

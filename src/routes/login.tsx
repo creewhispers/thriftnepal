@@ -47,7 +47,8 @@ function LoginPage() {
           },
         });
         if (error) throw error;
-        toast.success("Check your email to confirm your account.");
+        toast.success("Welcome to thriftdepo!");
+        navigate({ to: redirect || "/" });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
