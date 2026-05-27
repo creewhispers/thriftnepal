@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { z } from "zod";
 import { Navbar } from "@/components/site/Navbar";
 import { MobileNav } from "@/components/site/MobileNav";
 import { Hero } from "@/components/site/Hero";
@@ -9,13 +10,16 @@ import { Sellers } from "@/components/site/Sellers";
 import { Manifesto } from "@/components/site/Manifesto";
 import { Footer } from "@/components/site/Footer";
 
+const searchSchema = z.object({ cat: z.string().optional() });
+
 export const Route = createFileRoute("/")({
+  validateSearch: searchSchema,
   head: () => ({
     meta: [
-      { title: "thriftdepo.np — Nepal's online thrift marketplace" },
-      { name: "description", content: "Buy, sell, and rewear vintage, streetwear, sneakers and handmade fashion across Nepal. Built for Gen Z, powered by local sellers." },
+      { title: "thriftdepo.np — Nepal's online thrift marketplace, made in Chitwan" },
+      { name: "description", content: "Buy, sell, and rewear vintage, streetwear, sneakers and handmade fashion across Nepal. Built in Chitwan, powered by local sellers." },
       { property: "og:title", content: "thriftdepo.np — Buy. Sell. Rewear." },
-      { property: "og:description", content: "Nepal's online thrift marketplace for vintage, streetwear, and sustainable fashion." },
+      { property: "og:description", content: "Nepal's online thrift marketplace for vintage, streetwear, and sustainable fashion — made in Chitwan." },
       { property: "og:type", content: "website" },
     ],
   }),

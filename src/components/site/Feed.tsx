@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useSearch } from "@tanstack/react-router";
 import { ProductCard } from "./ProductCard";
 import { listProducts, type Listing } from "@/lib/listings";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,34 +16,39 @@ export function Feed() {
   const [tab, setTab] = useState(tabs[0]);
   const [items, setItems] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
+  const search = useSearch({ from: "/" }) as { cat?: string };
+  const category = search.cat;
 
   useEffect(() => {
     let cancel = false;
     setLoading(true);
-    listProducts({ sort: tab.sort, limit: 48 })
+    listProducts({ sort: tab.sort, limit: 48, category })
       .then((rows) => { if (!cancel) setItems(rows); })
       .catch(() => { if (!cancel) setItems([]); })
       .finally(() => { if (!cancel) setLoading(false); });
     return () => { cancel = true; };
-  }, [tab]);
+  }, [tab, category]);
 
-  // realtime: refresh on new/updated/deleted products
   useEffect(() => {
     const channel = supabase
       .channel("products-feed")
       .on("postgres_changes", { event: "*", schema: "public", table: "products" }, () => {
-        listProducts({ sort: tab.sort, limit: 48 }).then(setItems).catch(() => {});
+        listProducts({ sort: tab.sort, limit: 48, category }).then(setItems).catch(() => {});
       })
       .subscribe();
     return () => { void supabase.removeChannel(channel); };
-  }, [tab]);
+  }, [tab, category]);
 
   return (
-    <section className="mx-auto max-w-7xl px-4 md:px-6 mt-16 md:mt-24">
+    <section id="feed" className="mx-auto max-w-7xl px-4 md:px-6 mt-16 md:mt-24 scroll-mt-20">
       <div className="flex items-end justify-between flex-wrap gap-4 mb-6">
         <div>
-          <h2 className="font-display text-3xl md:text-5xl tracking-tight">The feed</h2>
-          <p className="text-sm text-muted-foreground mt-1">Live drops from sellers across Nepal.</p>
+          <h2 className="font-display text-3xl md:text-5xl tracking-tight">
+            {category ? category : "The feed"}
+          </h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            {category ? `Browsing ${category.toLowerCase()} drops` : "Live drops from sellers across Nepal."}
+          </p>
         </div>
         <div className="flex gap-1 rounded-full border border-border bg-card/60 p-1 overflow-x-auto no-scrollbar">
           {tabs.map((t) => (
@@ -71,9 +76,13 @@ export function Feed() {
           <div className="mx-auto h-12 w-12 rounded-full bg-secondary grid place-items-center mb-4">
             <Plus className="h-5 w-5" />
           </div>
-          <h3 className="font-display text-2xl">The depot is fresh</h3>
+          <h3 className="font-display text-2xl">
+            {category ? `No ${category.toLowerCase()} yet` : "The depot is fresh"}
+          </h3>
           <p className="text-sm text-muted-foreground mt-2 max-w-md mx-auto">
-            No active listings yet. Be the first to drop your closet — it takes under a minute.
+            {category
+              ? "Nothing in this category right now. Be the first to drop one."
+              : "No active listings yet. Be the first to drop your closet — it takes under a minute."}
           </p>
           <Link to="/sell" className="inline-flex items-center gap-1.5 mt-6 rounded-full bg-foreground text-background px-5 py-2.5 text-sm font-medium hover:opacity-90 transition">
             <Plus className="h-4 w-4" /> List your first item
