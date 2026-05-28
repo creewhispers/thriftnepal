@@ -24,28 +24,39 @@ function SavedPage() {
     if (!authLoading && !user) navigate({ to: "/login", search: { redirect: "/saved" } });
   }, [user, authLoading, navigate]);
 
+  const loadSaved = async (uid: string) => {
+    setLoading(true);
+    const { data: wl } = await supabase.from("wishlists").select("product_id").eq("user_id", uid);
+    const ids = (wl ?? []).map((r) => r.product_id);
+    if (ids.length === 0) { setItems([]); setLoading(false); return; }
+    const { data: prods } = await supabase
+      .from("products")
+      .select("id, seller_id, title, description, category, brand, size, condition, price, location, images, tags, status, views, created_at")
+      .in("id", ids);
+    const sellerIds = Array.from(new Set((prods ?? []).map((p) => p.seller_id)));
+    const { data: profs } = await supabase
+      .from("profiles")
+      .select("user_id, handle, display_name, avatar_url, verified, rating, rating_count")
+      .in("user_id", sellerIds);
+    const map = new Map((profs ?? []).map((p) => [p.user_id, p]));
+    const rows = (prods ?? []).map((p) => ({ ...p, seller: map.get(p.seller_id) ?? null })) as Listing[];
+    setItems(rows);
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (!user) return;
-    let cancel = false;
-    setLoading(true);
-    (async () => {
-      const { data: wl } = await supabase.from("wishlists").select("product_id").eq("user_id", user.id);
-      const ids = (wl ?? []).map((r) => r.product_id);
-      if (ids.length === 0) { if (!cancel) { setItems([]); setLoading(false); } return; }
-      const { data: prods } = await supabase
-        .from("products")
-        .select("id, seller_id, title, description, category, brand, size, condition, price, location, images, tags, status, views, created_at")
-        .in("id", ids);
-      const sellerIds = Array.from(new Set((prods ?? []).map((p) => p.seller_id)));
-      const { data: profs } = await supabase
-        .from("profiles")
-        .select("user_id, handle, display_name, avatar_url, verified, rating, rating_count")
-        .in("user_id", sellerIds);
-      const map = new Map((profs ?? []).map((p) => [p.user_id, p]));
-      const rows = (prods ?? []).map((p) => ({ ...p, seller: map.get(p.seller_id) ?? null })) as Listing[];
-      if (!cancel) { setItems(rows); setLoading(false); }
-    })();
-    return () => { cancel = true; };
+    void loadSaved(user.id);
+    const ch = supabase
+      .channel("saved-items")
+      .on("postgres_changes", { event: "*", schema: "public", table: "wishlists", filter: `user_id=eq.${user.id}` }, () => {
+        void loadSaved(user.id);
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "products" }, () => {
+        void loadSaved(user.id);
+      })
+      .subscribe();
+    return () => { void supabase.removeChannel(ch); };
   }, [user]);
 
   return (

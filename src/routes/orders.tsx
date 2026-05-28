@@ -53,8 +53,19 @@ function OrdersPage() {
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("orders").select("*").order("created_at", { ascending: false })
-      .then(({ data }) => { setOrders((data as Order[]) ?? []); setLoadingOrders(false); });
+    const loadOrders = async () => {
+      const { data } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
+      setOrders((data as Order[]) ?? []);
+      setLoadingOrders(false);
+    };
+    void loadOrders();
+    const ch = supabase
+      .channel("my-orders")
+      .on("postgres_changes", { event: "*", schema: "public", table: "orders", filter: `user_id=eq.${user.id}` }, () => {
+        void loadOrders();
+      })
+      .subscribe();
+    return () => { void supabase.removeChannel(ch); };
   }, [user]);
 
   return (

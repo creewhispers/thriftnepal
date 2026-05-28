@@ -47,6 +47,14 @@ function MePage() {
         if (data) setForm({ display_name: data.display_name ?? "", bio: data.bio ?? "", location: data.location ?? "" });
       });
     void getSellerListings(user.id).then(setListings);
+
+    const ch = supabase
+      .channel("my-listings")
+      .on("postgres_changes", { event: "*", schema: "public", table: "products", filter: `seller_id=eq.${user.id}` }, () => {
+        void getSellerListings(user.id).then(setListings);
+      })
+      .subscribe();
+    return () => { void supabase.removeChannel(ch); };
   }, [user]);
 
   const save = async () => {

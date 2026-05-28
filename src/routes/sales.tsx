@@ -74,7 +74,18 @@ function SalesPage() {
     setLoading(false);
   };
 
-  useEffect(() => { if (user) { setLoading(true); void load(); } /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [user]);
+  useEffect(() => {
+    if (!user) return;
+    setLoading(true);
+    void load();
+    const ch = supabase
+      .channel("sales-orders")
+      .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => {
+        void load();
+      })
+      .subscribe();
+    return () => { void supabase.removeChannel(ch); };
+  }, [user]);
 
   const advance = async (o: Order, to: Order["status"]) => {
     const { error } = await supabase.from("orders").update({ status: to }).eq("id", o.id);
