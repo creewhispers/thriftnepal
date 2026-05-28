@@ -35,6 +35,7 @@ function MessagesPage() {
   }, [user, authLoading, navigate]);
 
   const refresh = async (uid: string) => {
+    type Row = { id: string; product_id: string; sender_id: string; recipient_id: string; body: string; read_at: string | null; created_at: string };
     const { data: msgs } = await supabase
       .from("messages")
       .select("id, product_id, sender_id, recipient_id, body, read_at, created_at")
@@ -42,8 +43,8 @@ function MessagesPage() {
       .order("created_at", { ascending: false })
       .limit(500);
 
-    const byThread = new Map<string, { product_id: string; peer_id: string; last: typeof msgs extends (infer T)[] ? T : never; unread: number }>();
-    (msgs ?? []).forEach((m) => {
+    const byThread = new Map<string, { product_id: string; peer_id: string; last: Row; unread: number }>();
+    ((msgs ?? []) as Row[]).forEach((m) => {
       const peer = m.sender_id === uid ? m.recipient_id : m.sender_id;
       const key = `${m.product_id}:${peer}`;
       const entry = byThread.get(key);
