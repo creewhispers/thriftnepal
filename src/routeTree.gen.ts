@@ -10,19 +10,50 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SellRouteImport } from './routes/sell'
+import { Route as SearchRouteImport } from './routes/search'
+import { Route as SavedRouteImport } from './routes/saved'
+import { Route as SalesRouteImport } from './routes/sales'
 import { Route as OrdersRouteImport } from './routes/orders'
+import { Route as MessagesRouteImport } from './routes/messages'
+import { Route as MeRouteImport } from './routes/me'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PIdRouteImport } from './routes/p.$id'
+import { Route as MPidPeerRouteImport } from './routes/m.$pid.$peer'
 
 const SellRoute = SellRouteImport.update({
   id: '/sell',
   path: '/sell',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SavedRoute = SavedRouteImport.update({
+  id: '/saved',
+  path: '/saved',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SalesRoute = SalesRouteImport.update({
+  id: '/sales',
+  path: '/sales',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OrdersRoute = OrdersRouteImport.update({
   id: '/orders',
   path: '/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MessagesRoute = MessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeRoute = MeRouteImport.update({
+  id: '/me',
+  path: '/me',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -40,43 +71,106 @@ const PIdRoute = PIdRouteImport.update({
   path: '/p/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MPidPeerRoute = MPidPeerRouteImport.update({
+  id: '/m/$pid/$peer',
+  path: '/m/$pid/$peer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/me': typeof MeRoute
+  '/messages': typeof MessagesRoute
   '/orders': typeof OrdersRoute
+  '/sales': typeof SalesRoute
+  '/saved': typeof SavedRoute
+  '/search': typeof SearchRoute
   '/sell': typeof SellRoute
   '/p/$id': typeof PIdRoute
+  '/m/$pid/$peer': typeof MPidPeerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/me': typeof MeRoute
+  '/messages': typeof MessagesRoute
   '/orders': typeof OrdersRoute
+  '/sales': typeof SalesRoute
+  '/saved': typeof SavedRoute
+  '/search': typeof SearchRoute
   '/sell': typeof SellRoute
   '/p/$id': typeof PIdRoute
+  '/m/$pid/$peer': typeof MPidPeerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/me': typeof MeRoute
+  '/messages': typeof MessagesRoute
   '/orders': typeof OrdersRoute
+  '/sales': typeof SalesRoute
+  '/saved': typeof SavedRoute
+  '/search': typeof SearchRoute
   '/sell': typeof SellRoute
   '/p/$id': typeof PIdRoute
+  '/m/$pid/$peer': typeof MPidPeerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/orders' | '/sell' | '/p/$id'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/me'
+    | '/messages'
+    | '/orders'
+    | '/sales'
+    | '/saved'
+    | '/search'
+    | '/sell'
+    | '/p/$id'
+    | '/m/$pid/$peer'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/orders' | '/sell' | '/p/$id'
-  id: '__root__' | '/' | '/login' | '/orders' | '/sell' | '/p/$id'
+  to:
+    | '/'
+    | '/login'
+    | '/me'
+    | '/messages'
+    | '/orders'
+    | '/sales'
+    | '/saved'
+    | '/search'
+    | '/sell'
+    | '/p/$id'
+    | '/m/$pid/$peer'
+  id:
+    | '__root__'
+    | '/'
+    | '/login'
+    | '/me'
+    | '/messages'
+    | '/orders'
+    | '/sales'
+    | '/saved'
+    | '/search'
+    | '/sell'
+    | '/p/$id'
+    | '/m/$pid/$peer'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginRoute: typeof LoginRoute
+  MeRoute: typeof MeRoute
+  MessagesRoute: typeof MessagesRoute
   OrdersRoute: typeof OrdersRoute
+  SalesRoute: typeof SalesRoute
+  SavedRoute: typeof SavedRoute
+  SearchRoute: typeof SearchRoute
   SellRoute: typeof SellRoute
   PIdRoute: typeof PIdRoute
+  MPidPeerRoute: typeof MPidPeerRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -88,11 +182,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SellRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/saved': {
+      id: '/saved'
+      path: '/saved'
+      fullPath: '/saved'
+      preLoaderRoute: typeof SavedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sales': {
+      id: '/sales'
+      path: '/sales'
+      fullPath: '/sales'
+      preLoaderRoute: typeof SalesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/orders': {
       id: '/orders'
       path: '/orders'
       fullPath: '/orders'
       preLoaderRoute: typeof OrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/messages': {
+      id: '/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof MessagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/me': {
+      id: '/me'
+      path: '/me'
+      fullPath: '/me'
+      preLoaderRoute: typeof MeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -116,15 +245,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/m/$pid/$peer': {
+      id: '/m/$pid/$peer'
+      path: '/m/$pid/$peer'
+      fullPath: '/m/$pid/$peer'
+      preLoaderRoute: typeof MPidPeerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
+  MeRoute: MeRoute,
+  MessagesRoute: MessagesRoute,
   OrdersRoute: OrdersRoute,
+  SalesRoute: SalesRoute,
+  SavedRoute: SavedRoute,
+  SearchRoute: SearchRoute,
   SellRoute: SellRoute,
   PIdRoute: PIdRoute,
+  MPidPeerRoute: MPidPeerRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
