@@ -8,6 +8,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { Toaster } from "sonner";
+import { useLiveNotifications } from "@/lib/useLiveNotifications";
 
 import appCss from "../styles.css?url";
 
@@ -118,6 +119,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useLiveNotifications();
 
   return (
     <QueryClientProvider client={queryClient}>
