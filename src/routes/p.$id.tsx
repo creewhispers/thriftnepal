@@ -29,19 +29,20 @@ function ProductPage() {
   useEffect(() => {
     let cancel = false;
     setLoading(true);
-    getProduct(id)
-      .then(async (p) => {
-        if (cancel) return;
-        setProduct(p);
-        setActiveImg(0);
-        if (p) {
-          const rel = await listProducts({ category: p.category, limit: 8 });
-          if (!cancel) setRelated(rel.filter((r) => r.id !== p.id).slice(0, 4));
-        }
-      })
-      .catch(() => {})
-      .finally(() => { if (!cancel) setLoading(false); });
-    return () => { cancel = true; };
+    const reload = () => getProduct(id).then(async (p) => {
+      if (cancel) return;
+      setProduct(p);
+      if (p) {
+        const rel = await listProducts({ category: p.category, limit: 8 });
+        if (!cancel) setRelated(rel.filter((r) => r.id !== p.id).slice(0, 4));
+      }
+    });
+    reload().catch(() => {}).finally(() => { if (!cancel) setLoading(false); });
+    const ch = supabase
+      .channel(`product:${id}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "products", filter: `id=eq.${id}` }, () => void reload())
+      .subscribe();
+    return () => { cancel = true; void supabase.removeChannel(ch); };
   }, [id]);
 
   useEffect(() => {
