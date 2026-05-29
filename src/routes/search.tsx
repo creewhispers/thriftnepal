@@ -6,6 +6,7 @@ import { MobileNav } from "@/components/site/MobileNav";
 import { Footer } from "@/components/site/Footer";
 import { ProductCard } from "@/components/site/ProductCard";
 import { listProducts, type Listing, CATEGORIES, CONDITIONS, CITIES, type Condition } from "@/lib/listings";
+import { supabase } from "@/integrations/supabase/client";
 import { Search as SearchIcon, SlidersHorizontal, X } from "lucide-react";
 
 const searchSchema = z.object({
@@ -36,21 +37,28 @@ function SearchPage() {
 
   useEffect(() => {
     let cancel = false;
-    setLoading(true);
-    listProducts({
-      search: sp.q,
-      category: sp.cat,
-      condition: sp.cond as Condition | undefined,
-      location: sp.city,
-      minPrice: sp.min,
-      maxPrice: sp.max,
-      sort: sp.sort ?? "newest",
-      limit: 60,
-    })
-      .then((r) => { if (!cancel) setItems(r); })
-      .catch(() => { if (!cancel) setItems([]); })
-      .finally(() => { if (!cancel) setLoading(false); });
-    return () => { cancel = true; };
+    const run = () => {
+      setLoading(true);
+      listProducts({
+        search: sp.q,
+        category: sp.cat,
+        condition: sp.cond as Condition | undefined,
+        location: sp.city,
+        minPrice: sp.min,
+        maxPrice: sp.max,
+        sort: sp.sort ?? "newest",
+        limit: 60,
+      })
+        .then((r) => { if (!cancel) setItems(r); })
+        .catch(() => { if (!cancel) setItems([]); })
+        .finally(() => { if (!cancel) setLoading(false); });
+    };
+    run();
+    const ch = supabase
+      .channel("search-feed")
+      .on("postgres_changes", { event: "*", schema: "public", table: "products" }, () => run())
+      .subscribe();
+    return () => { cancel = true; void supabase.removeChannel(ch); };
   }, [sp.q, sp.cat, sp.cond, sp.city, sp.min, sp.max, sp.sort]);
 
   const update = (patch: Partial<z.infer<typeof searchSchema>>) =>
