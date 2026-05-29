@@ -181,8 +181,20 @@ export async function uploadListingImages(userId: string, files: File[]): Promis
 }
 
 export const CATEGORIES = [
-  "Hoodies", "Vintage Tees", "Sneakers", "Cargo Pants",
-  "Jackets", "Jewelry", "Bags", "Handmade", "Women's", "Men's",
+  // Tops
+  "T-Shirts", "Vintage Tees", "Shirts", "Polos", "Hoodies", "Sweatshirts", "Sweaters", "Jackets", "Coats",
+  // Bottoms
+  "Jeans", "Trousers", "Cargo Pants", "Joggers", "Shorts", "Skirts",
+  // Full
+  "Dresses", "Kurta / Kurti", "Saree", "Lehenga", "Daura Suruwal", "Gunyo Cholo", "Sherwani", "Suits",
+  // Outer / weather
+  "Pashmina & Shawls", "Dhaka Topi", "Caps & Hats", "Scarves",
+  // Footwear & accessories
+  "Sneakers", "Shoes", "Sandals", "Boots", "Bags", "Backpacks", "Wallets", "Belts", "Sunglasses", "Watches", "Jewelry",
+  // Specialty
+  "Activewear", "Innerwear", "Sleepwear", "Kids", "Women's", "Men's", "Unisex", "Handmade", "Festival Wear",
+  // Catch-all
+  "Other",
 ];
 
 export const CITIES = [
