@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Search, Heart, MessageCircle, User, Plus, Moon, Sun, Package, LogOut, Store, UserCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/useAuth";
+import { useUnreadMessages } from "@/lib/useUnread";
 import { supabase } from "@/integrations/supabase/client";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -10,6 +11,7 @@ export function Navbar() {
   const [q, setQ] = useState("");
   const { user } = useAuth();
   const navigate = useNavigate();
+  const unread = useUnreadMessages();
   useEffect(() => { document.documentElement.classList.toggle("dark", dark); }, [dark]);
 
   const submitSearch = (e: React.FormEvent) => {
@@ -51,8 +53,9 @@ export function Navbar() {
           <Link to="/saved" className="hidden md:grid h-9 w-9 place-items-center rounded-full hover:bg-secondary transition" aria-label="Saved">
             <Heart className="h-4 w-4" />
           </Link>
-          <Link to="/messages" className="hidden md:grid h-9 w-9 place-items-center rounded-full hover:bg-secondary transition" aria-label="Messages">
+          <Link to="/messages" className="hidden md:grid relative h-9 w-9 place-items-center rounded-full hover:bg-secondary transition" aria-label="Messages">
             <MessageCircle className="h-4 w-4" />
+            {unread > 0 && <span className="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-1 rounded-full bg-accent text-accent-foreground text-[10px] font-semibold grid place-items-center">{unread > 9 ? "9+" : unread}</span>}
           </Link>
 
           {user ? (
