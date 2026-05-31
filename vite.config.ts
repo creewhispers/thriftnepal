@@ -12,4 +12,16 @@ export default defineConfig({
   tanstackStart: {
     server: { entry: "server" },
   },
+  vite: {
+    define: {
+      "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(
+        process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL ?? "https://jlgymgwduixyymysyyxn.supabase.co",
+      ),
+      "import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY": JSON.stringify(
+        process.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
+          process.env.SUPABASE_PUBLISHABLE_KEY ??
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpsZ3ltZ3dkdWl4eXlteXN5eXhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2OTUzMTcsImV4cCI6MjA5NTI3MTMxN30.4GvxfmCCVnjqGykUajgCCC6lqj_AIiO6nAKilvr_zmA",
+      ),
+    },
+  },
 });
