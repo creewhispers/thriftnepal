@@ -119,12 +119,17 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  useLiveNotifications();
 
   return (
     <QueryClientProvider client={queryClient}>
+      <LiveNotificationBridge />
       <Outlet />
       <Toaster position="top-center" richColors />
     </QueryClientProvider>
   );
+}
+
+function LiveNotificationBridge() {
+  useLiveNotifications();
+  return null;
 }
